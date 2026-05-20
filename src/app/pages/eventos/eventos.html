@@ -1,0 +1,147 @@
+<div class="app-container">
+  <div
+    class="menu-backdrop"
+    *ngIf="menuAbierto"
+    (click)="cerrarMenu()"
+  ></div>
+
+  <aside class="side-menu" [class.open]="menuAbierto">
+    <div class="side-menu-header">
+      <div>
+        <h2>SmartTickets</h2>
+        <p>Menú principal</p>
+      </div>
+
+      <button class="close-menu" (click)="cerrarMenu()">
+        X
+      </button>
+    </div>
+
+    <nav class="side-menu-nav">
+      <a routerLink="/" (click)="cerrarMenu()">Inicio</a>
+      <button type="button" (click)="mostrarSeccionEventos()">Eventos</button>
+      <a routerLink="/pagos" (click)="cerrarMenu()">Mis entradas</a>
+      <a routerLink="/pagos" (click)="cerrarMenu()">Pagos</a>
+    </nav>
+  </aside>
+
+  <header class="navbar">
+    <div>
+      <h1>SmartTickets</h1>
+      <p>Sistema inteligente de eventos y entradas</p>
+    </div>
+
+    <nav>
+      <button class="menu-button" (click)="abrirMenu()">
+        &#8942;
+      </button>
+    </nav>
+  </header>
+
+  <main class="hero">
+    <section class="hero-content">
+      <span class="badge">Proyecto POO - Spring Boot + Angular</span>
+
+      <h2>Compra entradas para tus eventos favoritos</h2>
+
+      <p>
+        Explora conciertos, conferencias y festivales. Selecciona tu asiento,
+        elige el tipo de entrada y realiza tu pago de forma rápida y segura.
+      </p>
+
+      <div class="hero-actions">
+        <button (click)="cambiarVistaEventos()">
+          {{ mostrarEventos ? 'Ocultar eventos' : 'Ver eventos' }}
+        </button>
+
+        <button class="secondary" routerLink="/pagos">
+          Mis entradas
+        </button>
+      </div>
+    </section>
+
+    <section class="hero-card" *ngIf="eventos.length > 0">
+      <h3>Evento destacado</h3>
+      <p class="event-name">{{ eventos[0].nombre }}</p>
+      <p>{{ eventos[0].lugar }}</p>
+
+      <div class="event-info">
+        <span>{{ eventos[0].generoMusical || 'Evento especial' }}</span>
+
+        <span [class.sold-out-text]="eventoAgotado(eventos[0])">
+          {{
+            eventoAgotado(eventos[0])
+              ? 'Evento agotado'
+              : eventos[0].entradasDisponibles + ' entradas disponibles'
+          }}
+        </span>
+      </div>
+
+      <button
+        class="full-button"
+        [class.disabled-button]="eventoAgotado(eventos[0])"
+        [disabled]="eventoAgotado(eventos[0])"
+        (click)="verDetalle(eventos[0].id)"
+      >
+        {{ eventoAgotado(eventos[0]) ? 'Evento agotado' : 'Comprar entrada' }}
+      </button>
+    </section>
+  </main>
+
+  <section class="events-section" *ngIf="mostrarEventos">
+    <div class="section-title">
+      <h2>Eventos disponibles</h2>
+      <p>Estos eventos se cargan directamente desde el backend en Spring Boot.</p>
+    </div>
+
+    <p class="loading" *ngIf="isLoading">Cargando eventos...</p>
+
+    <p class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </p>
+
+    <div class="events-grid" *ngIf="!isLoading && eventos.length > 0">
+      <article
+        class="event-card"
+        *ngFor="let evento of eventos"
+        [class.sold-out-card]="eventoAgotado(evento)"
+      >
+        <div class="event-card-header">
+          <span class="event-type">Evento</span>
+
+          <span
+            class="availability"
+            [class.sold-out-badge]="eventoAgotado(evento)"
+          >
+            {{
+              eventoAgotado(evento)
+                ? 'Agotado'
+                : evento.entradasDisponibles + ' disponibles'
+            }}
+          </span>
+        </div>
+
+        <h3>{{ evento.nombre }}</h3>
+
+        <p class="description">
+          {{ evento.descripcion }}
+        </p>
+
+        <div class="details">
+          <span>Lugar: {{ evento.lugar }}</span>
+          <span>Fecha: {{ formatearFecha(evento.fecha) }}</span>
+          <span>Precio base: ${{ evento.precioBase }}</span>
+        </div>
+
+        <button
+          class="card-button"
+          [class.disabled-button]="eventoAgotado(evento)"
+          [disabled]="eventoAgotado(evento)"
+          (click)="verDetalle(evento.id)"
+        >
+          {{ eventoAgotado(evento) ? 'Evento agotado' : 'Ver detalles' }}
+        </button>
+      </article>
+    </div>
+  </section>
+</div>

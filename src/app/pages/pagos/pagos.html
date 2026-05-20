@@ -1,0 +1,91 @@
+<div class="payments-container">
+  <header class="payments-navbar">
+    <div>
+      <h1>SmartTickets</h1>
+      <p>Historial de entradas y pagos realizados</p>
+    </div>
+
+    <button class="back-button" (click)="volver()">
+      Volver a eventos
+    </button>
+  </header>
+
+  <section class="summary-card">
+    <div>
+      <span class="badge">Módulo de pagos</span>
+      <h2>Mis entradas confirmadas</h2>
+      <p>
+        Consulta las entradas compradas, el método de pago utilizado y el estado
+        de cada transacción registrada en el sistema.
+      </p>
+    </div>
+
+    <div class="summary-number">
+      <strong>{{ pagos.length }}</strong>
+      <span>pagos registrados</span>
+    </div>
+  </section>
+
+  <p class="loading" *ngIf="isLoading">Cargando pagos...</p>
+
+  <p class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </p>
+
+  <section class="payments-grid" *ngIf="!isLoading && pagos.length > 0">
+    <article class="payment-card" *ngFor="let pago of pagos">
+      <div class="payment-header">
+        <div>
+          <span class="payment-id">Pago #{{ pago.id }}</span>
+          <h3>{{ pago.entrada.evento.nombre }}</h3>
+        </div>
+
+        <span
+          class="status"
+          [class.approved]="pago.estadoPago === 'APROBADO'"
+          [class.pending]="pago.estadoPago === 'PENDIENTE'"
+          [class.rejected]="pago.estadoPago === 'RECHAZADO'"
+        >
+          {{ pago.estadoPago }}
+        </span>
+      </div>
+
+      <div class="payment-info">
+        <p>
+          <strong>Monto:</strong>
+          ${{ pago.monto }}
+        </p>
+
+        <p>
+          <strong>Método:</strong>
+          {{ pago.metodoPago }}
+        </p>
+
+        <p>
+          <strong>Fecha:</strong>
+          {{ formatearFecha(pago.fechaPago) }}
+        </p>
+
+        <p>
+          <strong>Usuario:</strong>
+          {{ pago.entrada.usuario.nombre }}
+        </p>
+
+        <p>
+          <strong>Asiento:</strong>
+          {{ pago.entrada.asiento.fila }}{{ pago.entrada.asiento.numero }}
+        </p>
+
+        <p>
+          <strong>Tipo de entrada:</strong>
+          {{ pago.entrada.precioFinal > pago.entrada.evento.precioBase ? 'Especial' : 'General' }}
+        </p>
+      </div>
+    </article>
+  </section>
+
+  <section class="empty-state" *ngIf="!isLoading && pagos.length === 0">
+    <h3>No hay pagos registrados</h3>
+    <p>Cuando compres y pagues una entrada, aparecerá en esta sección.</p>
+  </section>
+</div>

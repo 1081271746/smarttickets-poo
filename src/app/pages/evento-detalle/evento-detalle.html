@@ -1,0 +1,220 @@
+<div class="detail-container">
+  <header class="detail-navbar">
+    <div>
+      <h1>SmartTickets</h1>
+      <p>Detalle del evento y compra de entradas</p>
+    </div>
+
+    <button class="back-button" (click)="volver()">
+      Volver a eventos
+    </button>
+  </header>
+
+  <p class="loading" *ngIf="isLoading">Cargando información del evento...</p>
+
+  <p class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </p>
+
+  <p class="success-message" *ngIf="successMessage">
+    {{ successMessage }}
+  </p>
+
+  <section class="confirmation-card" *ngIf="pagoConfirmado">
+    <div>
+      <span class="confirmation-label">Compra finalizada</span>
+      <h2>Entrada confirmada correctamente</h2>
+
+      <p>
+        El pago fue aprobado y el asiento quedó marcado como ocupado en el sistema.
+      </p>
+    </div>
+
+    <div class="confirmation-info">
+      <p>
+        <strong>Pago:</strong>
+        #{{ pagoConfirmado.id }}
+      </p>
+
+      <p>
+        <strong>Monto:</strong>
+        ${{ pagoConfirmado.monto }}
+      </p>
+
+      <p>
+        <strong>Método:</strong>
+        {{ pagoConfirmado.metodoPago }}
+      </p>
+
+      <p>
+        <strong>Estado:</strong>
+        {{ pagoConfirmado.estadoPago }}
+      </p>
+    </div>
+
+    <button class="clear-button" (click)="limpiarConfirmacion()">
+      Realizar otra compra
+    </button>
+  </section>
+
+  <main class="detail-layout" *ngIf="!isLoading && evento">
+    <section class="event-detail-card">
+      <span class="badge">Evento seleccionado</span>
+
+      <h2>{{ evento.nombre }}</h2>
+
+      <p class="description">
+        {{ evento.descripcion }}
+      </p>
+
+      <div class="info-grid">
+        <div>
+          <strong>Lugar</strong>
+          <span>{{ evento.lugar }}</span>
+        </div>
+
+        <div>
+          <strong>Fecha</strong>
+          <span>{{ formatearFecha(evento.fecha) }}</span>
+        </div>
+
+        <div>
+          <strong>Precio base</strong>
+          <span>${{ evento.precioBase }}</span>
+        </div>
+
+        <div>
+          <strong>Entradas disponibles</strong>
+          <span>{{ evento.entradasDisponibles }}</span>
+        </div>
+      </div>
+
+      <div class="extra-info">
+        <p *ngIf="evento.artista">
+          <strong>Artista:</strong> {{ evento.artista }}
+        </p>
+
+        <p *ngIf="evento.generoMusical">
+          <strong>Género:</strong> {{ evento.generoMusical }}
+        </p>
+
+        <p *ngIf="evento.ponente">
+          <strong>Ponente:</strong> {{ evento.ponente }}
+        </p>
+
+        <p *ngIf="evento.tema">
+          <strong>Tema:</strong> {{ evento.tema }}
+        </p>
+
+        <p *ngIf="evento.numeroEscenarios">
+          <strong>Escenarios:</strong> {{ evento.numeroEscenarios }}
+        </p>
+
+        <p *ngIf="evento.duracionDias">
+          <strong>Duración:</strong> {{ evento.duracionDias }} días
+        </p>
+      </div>
+    </section>
+
+    <section class="purchase-card">
+      <h3>Comprar entrada</h3>
+      <p>Selecciona el tipo de entrada y un asiento disponible.</p>
+
+      <label for="tipoEntrada">Tipo de entrada</label>
+      <select
+        id="tipoEntrada"
+        [(ngModel)]="tipoEntradaSeleccionada"
+        [disabled]="!hayAsientosDisponibles() || mostrarPanelPago"
+      >
+        <option value="GENERAL">General</option>
+        <option value="PREFERENCIAL">Preferencial</option>
+        <option value="VIP">VIP</option>
+      </select>
+
+      <h4>Asientos</h4>
+
+      <div class="seat-grid">
+        <button
+          type="button"
+          class="seat"
+          *ngFor="let asiento of asientos"
+          [class.selected]="asientoSeleccionadoId === asiento.id"
+          [class.reserved]="asiento.estado === 'RESERVADO'"
+          [class.occupied]="asiento.estado === 'OCUPADO'"
+          [disabled]="asiento.estado !== 'DISPONIBLE' || mostrarPanelPago"
+          (click)="seleccionarAsiento(asiento)"
+        >
+          {{ asiento.fila }}{{ asiento.numero }}
+        </button>
+      </div>
+
+      <div class="seat-legend">
+        <span><i class="available"></i> Disponible</span>
+        <span><i class="selected-dot"></i> Seleccionado</span>
+        <span><i class="reserved-dot"></i> Reservado</span>
+        <span><i class="occupied-dot"></i> Ocupado</span>
+      </div>
+
+      <button
+        class="buy-button"
+        (click)="continuarAlPago()"
+        [disabled]="isBuying || !hayAsientosDisponibles() || mostrarPanelPago"
+      >
+        {{
+          hayAsientosDisponibles()
+            ? 'Continuar al pago'
+            : 'Evento agotado'
+        }}
+      </button>
+
+      <div class="payment-panel" *ngIf="mostrarPanelPago">
+        <h3>Confirmar pago</h3>
+
+        <div class="payment-summary">
+          <p>
+            <strong>Asiento:</strong>
+            {{ obtenerAsientoSeleccionado()?.fila }}{{ obtenerAsientoSeleccionado()?.numero }}
+          </p>
+
+          <p>
+            <strong>Tipo de entrada:</strong>
+            {{ tipoEntradaSeleccionada }}
+          </p>
+
+          <p>
+            <strong>Precio estimado:</strong>
+            ${{ calcularPrecioEstimado() }}
+          </p>
+        </div>
+
+        <label for="metodoPago">Método de pago</label>
+        <select
+          id="metodoPago"
+          [(ngModel)]="metodoPagoSeleccionado"
+        >
+          <option value="PSE">PSE</option>
+          <option value="TARJETA">Tarjeta</option>
+          <option value="TRANSFERENCIA">Transferencia</option>
+          <option value="EFECTIVO">Efectivo</option>
+        </select>
+
+        <button
+          class="pay-button"
+          (click)="registrarPago()"
+          [disabled]="isPaying"
+        >
+          {{ isPaying ? 'Procesando pago...' : 'Pagar y confirmar entrada' }}
+        </button>
+
+        <button
+          class="cancel-payment-button"
+          type="button"
+          (click)="cancelarPago()"
+          [disabled]="isPaying"
+        >
+          Cancelar
+        </button>
+      </div>
+    </section>
+  </main>
+</div>
