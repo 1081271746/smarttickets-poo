@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Table(name = "usuario")
 public class Usuario {
 
     @Id
@@ -15,7 +16,10 @@ public class Usuario {
 
     private String nombre;
 
+    @Column(unique = true)
     private String correo;
 
     private String telefono;
+
+    private String contrasena;
 }
