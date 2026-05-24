@@ -22,7 +22,7 @@ export class Login {
     private router: Router
   ) {}
 
-  iniciarSesion() {
+  iniciarSesion(): void {
 
     this.mensajeError = '';
 
@@ -35,16 +35,26 @@ export class Login {
 
         next: (usuario) => {
 
+          console.log(
+            'LOGIN EXITOSO',
+            usuario
+          );
+
           localStorage.setItem(
             'usuario',
             JSON.stringify(usuario)
           );
 
-          // REDIRIGE A EVENTOS
-          this.router.navigate(['/eventos']);
+          // VA A EVENTOS
+          this.router.navigate(['/']);
         },
 
-        error: () => {
+        error: (err) => {
+
+          console.error(
+            'ERROR LOGIN',
+            err
+          );
 
           this.mensajeError =
             'Correo o contraseña incorrectos';

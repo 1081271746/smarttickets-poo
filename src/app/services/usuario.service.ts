@@ -8,17 +8,22 @@ import { Usuario } from '../models/usuario.model';
 })
 export class UsuarioService {
 
-  // Backend LOCAL para pruebas del login
+  // BACKEND EN RENDER
   private readonly apiUrl =
-    'http://localhost:8080/api/usuarios';
+    'https://smarttickets-backend.onrender.com/api/usuarios';
 
   constructor(private http: HttpClient) {}
 
   listarUsuarios(): Observable<Usuario[]> {
-    return this.http.get<Usuario[]>(this.apiUrl);
+    return this.http.get<Usuario[]>(
+      this.apiUrl
+    );
   }
 
-  crearUsuario(usuario: Omit<Usuario, 'id'>): Observable<Usuario> {
+  crearUsuario(
+    usuario: Omit<Usuario, 'id'>
+  ): Observable<Usuario> {
+
     return this.http.post<Usuario>(
       this.apiUrl,
       usuario
