@@ -17,9 +17,9 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
 
                 registry.addMapping("/api/**")
-                        .allowedOrigins(
+                        .allowedOriginPatterns(
                                 "http://localhost:4200",
-                                "https://smarttickets-poo.vercel.app"
+                                "https://*.vercel.app"
                         )
                         .allowedMethods(
                                 "GET",
