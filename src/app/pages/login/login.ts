@@ -24,6 +24,8 @@ export class Login {
 
   iniciarSesion(): void {
 
+    console.log('Botón funcionando');
+
     this.mensajeError = '';
 
     this.usuarioService
@@ -35,26 +37,21 @@ export class Login {
 
         next: (usuario) => {
 
-          console.log(
-            'LOGIN EXITOSO',
-            usuario
-          );
+          console.log('LOGIN EXITOSO');
+          console.log(usuario);
 
           localStorage.setItem(
             'usuario',
             JSON.stringify(usuario)
           );
 
-          // VA A EVENTOS
-          this.router.navigate(['/']);
+          this.router.navigateByUrl('/eventos');
         },
 
-        error: (err) => {
+        error: (error) => {
 
-          console.error(
-            'ERROR LOGIN',
-            err
-          );
+          console.log('ERROR LOGIN');
+          console.log(error);
 
           this.mensajeError =
             'Correo o contraseña incorrectos';
