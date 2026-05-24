@@ -1,0 +1,51 @@
+<div class="login-container">
+
+  <div class="login-card">
+
+    <h1>SmartTickets</h1>
+    <p class="subtitulo">
+      Inicia sesión para continuar
+    </p>
+
+    <form (ngSubmit)="iniciarSesion()">
+
+      <div class="input-group">
+        <label>Correo</label>
+
+        <input
+          type="email"
+          [(ngModel)]="correo"
+          name="correo"
+          placeholder="ejemplo@gmail.com"
+          required
+        />
+      </div>
+
+      <div class="input-group">
+        <label>Contraseña</label>
+
+        <input
+          type="password"
+          [(ngModel)]="contrasena"
+          name="contrasena"
+          placeholder="********"
+          required
+        />
+      </div>
+
+      <p
+        *ngIf="mensajeError"
+        class="error"
+      >
+        {{ mensajeError }}
+      </p>
+
+      <button type="submit">
+        Iniciar sesión
+      </button>
+
+    </form>
+
+  </div>
+
+</div>

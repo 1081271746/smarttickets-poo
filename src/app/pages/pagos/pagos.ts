@@ -7,11 +7,13 @@ import { PagoService } from '../../services/pago.service';
 
 @Component({
   selector: 'app-pagos',
+  standalone: true,
   imports: [CommonModule],
   templateUrl: './pagos.html',
   styleUrl: './pagos.css'
 })
 export class Pagos implements OnInit {
+
   pagos: Pago[] = [];
   isLoading = true;
   errorMessage = '';
@@ -34,26 +36,32 @@ export class Pagos implements OnInit {
         this.pagos = data;
         this.isLoading = false;
       },
+
       error: () => {
-        this.errorMessage = 'No se pudieron cargar los pagos registrados.';
+        this.errorMessage =
+          'No se pudieron cargar los pagos registrados.';
         this.isLoading = false;
       }
     });
   }
 
   volver(): void {
-    this.router.navigate(['/']);
+    this.router.navigate(['/eventos']);
   }
 
   formatearFecha(fecha: string): string {
+
     if (!fecha) {
       return 'Sin fecha registrada';
     }
 
-    return new Date(fecha).toLocaleDateString('es-CO', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    return new Date(fecha).toLocaleDateString(
+      'es-CO',
+      {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }
+    );
   }
 }
