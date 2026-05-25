@@ -46,7 +46,7 @@ export class Pagos implements OnInit {
   }
 
   volver(): void {
-  this.router.navigateByUrl('/eventos');
+  window.location.href = '/eventos';
   }
 
   formatearFecha(fecha: string): string {
