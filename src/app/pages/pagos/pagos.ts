@@ -45,9 +45,7 @@ export class Pagos implements OnInit {
     });
   }
 
-  volver(): void {
-  this.router.navigate(['/eventos']);
-  }
+  
 
   formatearFecha(fecha: string): string {
 
